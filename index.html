@@ -18,20 +18,12 @@
     <div id="main-screen" class="screen hidden">
         <div class="music-selector">
             <h3>Escolha uma música:</h3>
+            <div id="song-title">Selecione uma música</div>
             <ul id="track-list">
                 <!-- Lista de músicas será preenchida pelo JS -->
             </ul>
-           
         </div>
 
-        <div id="main-screen" class="hidden">
-            <div id="timer"></div>
-            <h2 id="song-title">Nenhuma música tocando</h2>
-            <button id="play-pause-btn">▶️</button>
-            <input type="range" id="seek-bar" min="0" max="100" value="0">
-            <ul id="track-list"></ul>
-        </div>
-       
         <div class="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
@@ -63,7 +55,6 @@
         </div>
     </div>
 
-    <script src="script.js" defer></script>
-    <script src="https://sdk.scdn.co/spotify-player.js" defer></script>
+    <script src="script.js"></script>
 </body>
 </html>

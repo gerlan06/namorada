@@ -51,120 +51,64 @@ body::before {
     display: none;
 }
 
-.music-selector {
-    margin-bottom: 20px;
-    width: 90%;
-    max-width: 600px;
-    background: #181818;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+.hidden {
+    display: none;
 }
 
-.music-selector h3 {
-    margin: 0 0 10px;
+#timer {
     font-size: 20px;
-    color: #FFFFFF;
+    text-align: center;
+}
+
+.carousel-item {
+    display: none;
+}
+
+.carousel-item.active {
+    display: block;
+}
+
+.balloon {
+    position: absolute;
+    font-size: 30px;
+    animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+    0% { bottom: -10%; }
+    100% { bottom: 110%; }
+}
+
+#song-title {
+    text-align: center;
+    margin: 10px 0;
+}
+
+#play-pause-btn {
+    display: block;
+    margin: 10px auto;
+    font-size: 20px;
+}
+
+#seek-bar {
+    width: 80%;
+    display: block;
+    margin: 10px auto;
 }
 
 #track-list {
     list-style: none;
     padding: 0;
-    margin: 0;
-    max-height: 150px;
-    overflow-y: auto;
+    text-align: center;
 }
 
 #track-list li {
-    padding: 10px;
-    color: #B3B3B3;
     cursor: pointer;
-    transition: background 0.2s ease;
+    padding: 5px;
 }
 
 #track-list li:hover {
-    background: #282828;
-    color: #FFFFFF;
-}
-
-.audio-player {
-    margin-bottom: 20px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    background: #181818;
-    padding: 15px 20px;
-    border-radius: 8px;
-    width: 90%;
-    max-width: 600px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-#song-title {
-    font-size: 18px;
-    color: #FFFFFF;
-    font-weight: bold;
-    flex-grow: 1;
-}
-
-#play-pause-btn {
-    background: #1DB954;
-    border: none;
-    font-size: 20px;
-    color: white;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: background 0.3s ease;
-}
-
-#play-pause-btn:hover {
-    background: #1ed760;
-}
-
-#seek-bar {
-    width: 250px;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    height: 4px;
-    background: #535353;
-    border-radius: 2px;
-    outline: none;
-}
-
-#seek-bar::-webkit-slider-thumb {
-    -webkit-appearance: none;
-    width: 12px;
-    height: 12px;
-    background: #1DB954;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-}
-
-#seek-bar::-moz-range-thumb {
-    -moz-appearance: none;
-    width: 12px;
-    height: 12px;
-    background: #1DB954;
-    border-radius: 50%;
-    cursor: pointer;
-    border: none;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
-}
-
-#seek-bar::-ms-thumb {
-    width: 12px;
-    height: 12px;
-    background: #1DB954;
-    border-radius: 50%;
-    cursor: pointer;
-    box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+    background-color: #f0f0f0;
 }
 
 .carousel {

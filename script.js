@@ -1,10 +1,4 @@
-// Definir a função globalmente antes de tudo
-window.onSpotifyWebPlaybackSDKReady = function() {
-    console.log('Spotify Web Playback SDK carregado!');
-    initializeSpotifyPlayer();
-};
-
-// Verificar elementos DOM antes de adicionar eventos
+// Verificar elementos DOM
 const entryScreen = document.getElementById('entry-screen');
 if (entryScreen) {
     entryScreen.addEventListener('click', function() {
@@ -72,244 +66,44 @@ function startBalloons() {
     setInterval(createBalloon, 500);
 }
 
-// Spotify Integration
-const playPauseBtn = document.getElementById('play-pause-btn');
-const seekBar = document.getElementById('seek-bar');
+// Elementos do player
 const songTitle = document.getElementById('song-title');
 const trackList = document.getElementById('track-list');
 
-if (!playPauseBtn) console.error('Elemento "play-pause-btn" não encontrado no HTML.');
-if (!seekBar) console.error('Elemento "seek-bar" não encontrado no HTML.');
-if (!songTitle) console.error('Elemento "song-title" não encontrado no HTML.');
-if (!trackList) console.error('Elemento "track-list" não encontrado no HTML.');
+if (!songTitle) console.error('Elemento "song-title" não encontrado.');
+if (!trackList) console.error('Elemento "track-list" não encontrado.');
 
-let player;
-let accessToken;
-let deviceId;
+// Lista de músicas com URLs do YouTube
+const tracks = [
+    { name: 'Melhor que Ontem - Djonga', url: 'https://www.youtube.com/watch?v=uS8eTYD2vMg' },
+    { name: 'Chuva de Arroz - Luan Santana', url: 'https://www.youtube.com/watch?v=rTsbSY04s1Y' },
+    { name: 'Será que é Amor - Arlindo Cruz', url: 'https://www.youtube.com/watch?v=X9zG4lEfDrc' }
+];
 
-function getAccessToken() {
-    const refreshToken = 'AQCnVFGexUmoO7E3M7P7hm1uxY3T650KeINI4g-NGwjRRoo5To6dRd3My6P-9GNUChHfbuOr1QqX4VFyLQGF24WAKmXezAYtkt4b2-XGcK7An7oDkmCZQgNcR5-kF9WQzyI'; // Substitua pelo refresh token
-    const clientId = '4b44b1869d5d46c18711c31928ff229b'; // Substitua pelo Client ID
-    const clientSecret = '922e3bccbd314b258a3fabd3e8fa4ea9'; // Substitua pelo Client Secret
-    
-    return fetch('https://accounts.spotify.com/api/token', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
-        },
-        body: 'grant_type=refresh_token&refresh_token=' + refreshToken
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Token obtido:', data.access_token);
-        accessToken = data.access_token;
-        return data.access_token;
-    })
-    .catch(error => {
-        console.error('Erro ao obter token:', error);
-        return null;
-    });
-}
-
-function initializeSpotifyPlayer() {
-    console.log('Inicializando Spotify Player...');
-    loadTracks();
-
-    getAccessToken().then(token => {
-        if (!token) {
-            console.error('Token não obtido. Verifique refresh_token, client_id e client_secret.');
-        } else {
-            player = new Spotify.Player({
-                name: 'App para Minha Namorada',
-                getOAuthToken: cb => { cb(token); },
-                volume: 0.5
-            });
-
-            player.addListener('ready', ({ device_id }) => {
-                console.log('Dispositivo pronto com ID:', device_id);
-                deviceId = device_id;
-                setTimeout(() => {
-                    setActiveDevice(device_id);
-                    console.log('Aguardando ativação do dispositivo...');
-                }, 3000);
-            });
-
-            player.addListener('player_state_changed', state => {
-                if (state && state.track_window && state.track_window.current_track && songTitle) {
-                    const currentTrack = state.track_window.current_track;
-                    songTitle.textContent = currentTrack.name;
-                    const progress = (state.position / state.duration) * 100;
-                    if (seekBar) {
-                        seekBar.value = progress;
-                        seekBar.style.background = `linear-gradient(to right, #1DB954 ${progress}%, #535353 ${progress}%)`;
-                    }
-                    if (playPauseBtn) playPauseBtn.textContent = state.paused ? '▶️' : '⏸️';
-                } else {
-                    console.log('Estado do player inválido ou sem faixa ativa:', state);
-                }
-            });
-
-            player.addListener('not_ready', ({ device_id }) => {
-                console.log('Dispositivo offline com ID:', device_id);
-            });
-
-            player.connect().then(success => {
-                if (success) {
-                    console.log('Conectado ao Spotify com sucesso!');
-                } else {
-                    console.error('Falha ao conectar ao Spotify.');
-                }
-            });
-        }
-    });
-}
-
-function setActiveDevice(deviceId) {
-    fetch('https://api.spotify.com/v1/me/player', {
-        method: 'PUT',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            device_ids: [deviceId],
-            play: false
-        })
-    })
-    .then(response => {
-        if (response.ok) {
-            console.log('Dispositivo ativado com sucesso!');
-            checkActiveDevice();
-        } else {
-            console.error('Erro ao ativar dispositivo:', response.status, response.statusText);
-        }
-    })
-    .catch(error => console.error('Erro ao ativar dispositivo:', error));
-}
-
-function checkActiveDevice() {
-    fetch('https://api.spotify.com/v1/me/player', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data && data.device && data.device.id === deviceId) {
-            console.log('Dispositivo confirmado como ativo no Spotify Connect:', data.device.name);
-        } else {
-            console.warn('Dispositivo não está ativo no Spotify Connect. Selecione "App para Minha Namorada" manualmente.');
-        }
-    })
-    .catch(error => console.error('Erro ao verificar dispositivo ativo:', error));
-}
-
-function playSpotifyTrack(uri) {
-    if (!accessToken || !deviceId) {
-        console.error('Token ou Device ID não disponível ainda. Aguarde a conexão.');
-    } else {
-        player.getCurrentState().then(state => {
-            if (!state) {
-                console.log('Player não está pronto. Tentando novamente em 3 segundos...');
-                setTimeout(() => playSpotifyTrack(uri), 3000);
-            } else {
-                console.log('Tentando reproduzir URI:', uri);
-                fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `Bearer ${accessToken}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        uris: [uri]
-                    })
-                })
-                .then(response => {
-                    if (response.ok) {
-                        console.log('Música iniciada com sucesso!');
-                    } else {
-                        return response.json().then(errorData => {
-                            console.error('Erro ao iniciar música:', response.status, errorData);
-                            if (response.status === 403) {
-                                if (errorData.error.reason === 'PREMIUM_REQUIRED') {
-                                    console.error('Erro: Conta Spotify Premium é necessária para usar o Web Playback SDK.');
-                                } else {
-                                    console.error('Erro 403: Restriction violated. Verifique se o token tem os escopos "user-modify-playback-state" e "streaming".');
-                                }
-                            }
-                            throw new Error(`Erro ${response.status}: ${errorData.error.message}`);
-                        });
-                    }
-                })
-                .catch(error => console.error('Erro na API:', error));
-            }
-        });
-    }
+function playTrack(url, trackName) {
+    window.open(url, '_blank'); // Abre o vídeo no YouTube em uma nova aba
+    console.log('Abrindo vídeo no YouTube:', url);
+    if (songTitle) songTitle.textContent = trackName;
 }
 
 function loadTracks() {
     console.log('Carregando lista de músicas...');
-    const tracks = [
-        { name: 'Nocaute - Henrique e Juliano', uri: 'spotify:track:7gKIfGuf9f0pT7Td1GhaMr' },
-        { name: 'Chuva de Arroz - Luan Santana', uri: 'spotify:track:5rNwhZzL9PryvOIkNTKN2P' },
-        { name: 'Perfect - Ed Sheeran', uri: 'spotify:track:0TGDIypz2P8G7rh6H5CNU6' }
-    ];
-
     if (!trackList) {
-        console.error('Elemento "track-list" não encontrado. Não é possível carregar as músicas.');
-    } else {
-        trackList.innerHTML = '';
-        tracks.forEach(track => {
-            const li = document.createElement('li');
-            li.textContent = track.name;
-            li.addEventListener('click', () => {
-                if (player && deviceId) {
-                    setTimeout(() => playSpotifyTrack(track.uri), 3000);
-                    console.log('Tentando tocar:', track.name);
-                } else {
-                    console.error('Player ou Device ID não inicializado ainda. Aguarde a conexão.');
-                }
-            });
-            trackList.appendChild(li);
-        });
-        console.log('Lista de músicas carregada com sucesso!');
+        console.error('Elemento "track-list" não encontrado.');
+        return;
     }
-}
 
-if (playPauseBtn) {
-    playPauseBtn.addEventListener('click', function() {
-        if (player) {
-            player.getCurrentState().then(state => {
-                if (!state) {
-                    console.log('Nenhum estado disponível para play/pause.');
-                } else {
-                    if (state.paused) player.resume();
-                    else player.pause();
-                }
-            });
-        } else {
-            console.error('Player não inicializado para play/pause.');
-        }
+    trackList.innerHTML = '';
+    tracks.forEach(track => {
+        const li = document.createElement('li');
+        li.textContent = track.name;
+        li.addEventListener('click', () => {
+            playTrack(track.url, track.name);
+        });
+        trackList.appendChild(li);
     });
-}
-
-if (seekBar) {
-    seekBar.addEventListener('input', function() {
-        if (player) {
-            player.getCurrentState().then(state => {
-                if (!state) {
-                    console.log('Nenhum estado disponível para seek.');
-                } else {
-                    const seekTime = (seekBar.value / 100) * state.duration;
-                    player.seek(seekTime);
-                }
-            });
-        } else {
-            console.error('Player não inicializado para seek.');
-        }
-    });
+    console.log('Lista de músicas carregada com sucesso!');
 }
 
 startTimer();
+loadTracks();
