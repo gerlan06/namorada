@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App para Minha Namorada</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Tela de entrada -->
+    <div id="entry-screen" class="screen">
+        <div class="letter">💌</div>
+        <p>Aperte aqui </p>
+    </div>
+
+    <!-- Tela principal -->
+    <div id="main-screen" class="screen hidden">
+        <audio id="background-music" loop>
+            <source src="nocaute.mp3" type="audio/mpeg">
+            Seu navegador não suporta áudio.
+        </audio>
+        <div class="audio-player">
+            <span id="song-title">Nocaute</span>
+            <button id="play-pause-btn">▶️</button>
+            <input type="range" id="seek-bar" value="0" min="0" max="100">
+        </div>
+        <div class="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="foto1.jpeg" alt="Foto 1">
+                </div>
+                <div class="carousel-item">
+                    <img src="foto2.jpeg" alt="Foto 2">
+                </div>
+                <div class="carousel-item">
+                    <img src="foto3.jpeg" alt="Foto 3">
+                </div>
+                <div class="carousel-item">
+                    <img src="foto4.jpeg" alt="Foto 4">
+                </div>
+                <div class="carousel-item">
+                    <img src="foto5.jpeg" alt="Foto 5">
+                </div>
+                <div class="carousel-item">
+                    <img src="foto6.jpeg" alt="Foto 6">
+                </div>
+            </div>
+            <button class="carousel-control prev" onclick="moveSlide(-1)">❮</button>
+            <button class="carousel-control next" onclick="moveSlide(1)">❯</button>
+        </div>
+        <div class="text-container">
+            <p class="love-text">Amo vc há ❤️:</p>
+            <div id="timer"></div>
+            <p>para sempre nós</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
