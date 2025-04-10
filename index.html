@@ -21,12 +21,17 @@
             <ul id="track-list">
                 <!-- Lista de músicas será preenchida pelo JS -->
             </ul>
+           
         </div>
-        <div class="audio-player" id="player">
-            <span id="song-title">Nome da Música</span>
+
+        <div id="main-screen" class="hidden">
+            <div id="timer"></div>
+            <h2 id="song-title">Nenhuma música tocando</h2>
             <button id="play-pause-btn">▶️</button>
-            <input type="range" id="seek-bar" value="0" min="0" max="100">
+            <input type="range" id="seek-bar" min="0" max="100" value="0">
+            <ul id="track-list"></ul>
         </div>
+       
         <div class="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
