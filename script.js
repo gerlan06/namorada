@@ -1,9 +1,19 @@
+// Definir a função globalmente antes de tudo
+window.onSpotifyWebPlaybackSDKReady = function() {
+    console.log('Spotify Web Playback SDK carregado!');
+    initializeSpotifyPlayer();
+};
+
 document.getElementById('entry-screen').addEventListener('click', function() {
     document.getElementById('entry-screen').classList.add('hidden');
     document.getElementById('main-screen').classList.remove('hidden');
     startBalloons();
     startCarousel();
-    initializeSpotifyPlayer();
+    if (window.Spotify) {
+        initializeSpotifyPlayer();
+    } else {
+        console.log('Aguardando o carregamento do Spotify SDK...');
+    }
 });
 
 function startTimer() {
@@ -60,6 +70,8 @@ const seekBar = document.getElementById('seek-bar');
 const songTitle = document.getElementById('song-title');
 const trackList = document.getElementById('track-list');
 let player;
+let accessToken;
+let deviceId;
 
 function getAccessToken() {
     const refreshToken = 'AQAHK6_k6IlgHKTmDdnh-XWgVWIBpGGA-i4_d2rwumit15Aatuhs6moPaKZ2Vq-ACWijTtQ2khNh2nCD4Q8-8ozupPz-JfkBgs773g5Une1QXOg7msO_4l524-gG3l7kTao'; // Substitua pelo refresh token
@@ -77,6 +89,7 @@ function getAccessToken() {
     .then(response => response.json())
     .then(data => {
         console.log('Token obtido:', data.access_token);
+        accessToken = data.access_token;
         return data.access_token;
     })
     .catch(error => {
@@ -87,50 +100,101 @@ function getAccessToken() {
 
 function initializeSpotifyPlayer() {
     console.log('Inicializando Spotify Player...');
-    loadTracks(); // Carrega a lista imediatamente como fallback
+    loadTracks(); // Carrega a lista imediatamente
 
-    window.onSpotifyWebPlaybackSDKReady = () => {
-        getAccessToken().then(token => {
-            if (!token) {
-                console.error('Token não obtido. Verifique refresh_token, client_id e client_secret.');
-                return;
-            }
+    getAccessToken().then(token => {
+        if (!token) {
+            console.error('Token não obtido. Verifique refresh_token, client_id e client_secret.');
+            return;
+        }
 
-            player = new Spotify.Player({
-                name: 'App para Minha Namorada',
-                getOAuthToken: cb => { cb(token); },
-                volume: 0.5
-            });
-
-            player.addListener('ready', ({ device_id }) => {
-                console.log('Dispositivo pronto com ID:', device_id);
-                // loadTracks(); // Já chamado como fallback
-            });
-
-            player.addListener('player_state_changed', state => {
-                if (state) {
-                    const currentTrack = state.track_window.current_track;
-                    songTitle.textContent = currentTrack.name;
-                    const progress = (state.position / state.duration) * 100;
-                    seekBar.value = progress;
-                    seekBar.style.background = `linear-gradient(to right, #1DB954 ${progress}%, #535353 ${progress}%)`;
-                    playPauseBtn.textContent = state.paused ? '▶️' : '⏸️';
-                }
-            });
-
-            player.addListener('not_ready', ({ device_id }) => {
-                console.log('Dispositivo offline com ID:', device_id);
-            });
-
-            player.connect().then(success => {
-                if (success) {
-                    console.log('Conectado ao Spotify com sucesso!');
-                } else {
-                    console.error('Falha ao conectar ao Spotify.');
-                }
-            });
+        player = new Spotify.Player({
+            name: 'App para Minha Namorada',
+            getOAuthToken: cb => { cb(token); },
+            volume: 0.5
         });
-    };
+
+        player.addListener('ready', ({ device_id }) => {
+            console.log('Dispositivo pronto com ID:', device_id);
+            deviceId = device_id;
+            // Ativar o dispositivo automaticamente
+            setActiveDevice(device_id);
+        });
+
+        player.addListener('player_state_changed', state => {
+            if (state) {
+                const currentTrack = state.track_window.current_track;
+                songTitle.textContent = currentTrack.name;
+                const progress = (state.position / state.duration) * 100;
+                seekBar.value = progress;
+                seekBar.style.background = `linear-gradient(to right, #1DB954 ${progress}%, #535353 ${progress}%)`;
+                playPauseBtn.textContent = state.paused ? '▶️' : '⏸️';
+            }
+        });
+
+        player.addListener('not_ready', ({ device_id }) => {
+            console.log('Dispositivo offline com ID:', device_id);
+        });
+
+        player.connect().then(success => {
+            if (success) {
+                console.log('Conectado ao Spotify com sucesso!');
+            } else {
+                console.error('Falha ao conectar ao Spotify.');
+            }
+        });
+    });
+}
+
+function setActiveDevice(deviceId) {
+    fetch('https://api.spotify.com/v1/me/player', {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            device_ids: [deviceId],
+            play: false // Não inicia automaticamente
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Dispositivo ativado com sucesso!');
+        } else {
+            console.error('Erro ao ativar dispositivo:', response.statusText);
+        }
+    })
+    .catch(error => console.error('Erro ao ativar dispositivo:', error));
+}
+
+function playSpotifyTrack(uri) {
+    if (!accessToken || !deviceId) {
+        console.error('Token ou Device ID não disponível ainda. Aguarde a conexão.');
+        return;
+    }
+
+    fetch(`https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`, {
+        method: 'PUT',
+        headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            uris: [uri]
+        })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Música iniciada com sucesso!');
+        } else {
+            return response.text().then(text => {
+                console.error('Erro ao iniciar música:', response.status, text);
+                throw new Error('Erro na API');
+            });
+        }
+    })
+    .catch(error => console.error('Erro na API:', error));
 }
 
 function loadTracks() {
@@ -141,16 +205,16 @@ function loadTracks() {
         { name: 'Shape of You - Ed Sheeran', uri: 'spotify:track:7GhIk7IlSIunPntWdH8vTI' }
     ];
 
-    trackList.innerHTML = ''; // Limpa a lista antes de preencher
+    trackList.innerHTML = '';
     tracks.forEach(track => {
         const li = document.createElement('li');
         li.textContent = track.name;
         li.addEventListener('click', () => {
-            if (player) {
-                player.play({ uris: [track.uri] });
-                console.log('Tocando:', track.name);
+            if (player && deviceId) {
+                playSpotifyTrack(track.uri);
+                console.log('Tentando tocar:', track.name);
             } else {
-                console.error('Player não inicializado ainda.');
+                console.error('Player ou Device ID não inicializado ainda. Aguarde a conexão.');
             }
         });
         trackList.appendChild(li);

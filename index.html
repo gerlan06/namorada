@@ -16,10 +16,6 @@
 
     <!-- Tela principal -->
     <div id="main-screen" class="screen hidden">
-        <audio id="background-music" loop>
-            <source src="sua-musica.mp3" type="audio/mpeg">
-            Seu navegador não suporta áudio.
-        </audio>
         <div class="music-selector">
             <h3>Escolha uma música:</h3>
             <ul id="track-list">
@@ -34,26 +30,26 @@
         <div class="carousel">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="foto1.jpg" alt="Foto 1">
+                    <img src="foto1.jpeg" alt="Foto 1">
                 </div>
                 <div class="carousel-item">
-                    <img src="foto2.jpg" alt="Foto 2">
+                    <img src="foto2.jpeg" alt="Foto 2">
                 </div>
                 <div class="carousel-item">
-                    <img src="foto3.jpg" alt="Foto 3">
+                    <img src="foto3.jpeg" alt="Foto 3">
                 </div>
                 <div class="carousel-item">
-                    <img src="foto4.jpg" alt="Foto 4">
+                    <img src="foto4.jpeg" alt="Foto 4">
                 </div>
                 <div class="carousel-item">
-                    <img src="foto5.jpg" alt="Foto 5">
+                    <img src="foto5.jpeg" alt="Foto 5">
                 </div>
                 <div class="carousel-item">
-                    <img src="foto6.jpg" alt="Foto 6">
+                    <img src="foto6.jpeg" alt="Foto 6">
                 </div>
             </div>
-            <button class="carousel-control prev" onclick="moveSlide(-1)">❮</button>
-            <button class="carousel-control next" onclick="moveSlide(1)">❯</button>
+            <button class="carousel-control prev" onclick="moveSlide(-1)"></button>
+            <button class="carousel-control next" onclick="moveSlide(1)"></button>
         </div>
         <div class="text-container">
             <p class="love-text">Amo vc há ❤️:</p>
@@ -62,7 +58,7 @@
         </div>
     </div>
 
-    <script src="https://sdk.scdn.co/spotify-player.js"></script> <!-- Spotify SDK -->
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
+    <script src="https://sdk.scdn.co/spotify-player.js" defer></script>
 </body>
 </html>
