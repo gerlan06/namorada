@@ -69,41 +69,95 @@ function startBalloons() {
 // Elementos do player
 const songTitle = document.getElementById('song-title');
 const trackList = document.getElementById('track-list');
+const audioPlayer = document.getElementById('audio-player');
+const playPauseBtn = document.getElementById('play-pause-btn');
+const prevBtn = document.getElementById('prev-btn');
+const nextBtn = document.getElementById('next-btn');
 
 if (!songTitle) console.error('Elemento "song-title" não encontrado.');
 if (!trackList) console.error('Elemento "track-list" não encontrado.');
+if (!audioPlayer) console.error('Elemento "audio-player" não encontrado.');
+if (!playPauseBtn) console.error('Elemento "play-pause-btn" não encontrado.');
+if (!prevBtn) console.error('Elemento "prev-btn" não encontrado.');
+if (!nextBtn) console.error('Elemento "next-btn" não encontrado.');
 
-// Lista de músicas com URLs do YouTube
+// Lista de músicas com arquivos MP3 locais
 const tracks = [
-    { name: 'Melhor que Ontem - Djonga', url: 'https://www.youtube.com/watch?v=uS8eTYD2vMg' },
-    { name: 'Chuva de Arroz - Luan Santana', url: 'https://www.youtube.com/watch?v=rTsbSY04s1Y' },
-    { name: 'Será que é Amor - Arlindo Cruz', url: 'https://www.youtube.com/watch?v=X9zG4lEfDrc' }
+    { name: 'Melhor que Ontem - Djonga', src: 'musica1.mp3' },
+    { name: 'Chuva de Arroz - Luan Santana', src: 'musica2.mp3' },
+    { name: 'Será que é Amor - Arlindo Cruz', src: 'musica3.mp3' },
+    { name: 'Música 4', src: 'musica4.mp3' }, // Substitua pelo nome real
+    { name: 'Música 5', src: 'musica5.mp3' }  // Substitua pelo nome real
 ];
 
-function playTrack(url, trackName) {
-    window.open(url, '_blank'); // Abre o vídeo no YouTube em uma nova aba
-    console.log('Abrindo vídeo no YouTube:', url);
-    if (songTitle) songTitle.textContent = trackName;
+let currentTrackIndex = 0;
+
+function loadTrack(index) {
+    audioPlayer.src = tracks[index].src;
+    songTitle.textContent = tracks[index].name;
+    audioPlayer.load();
+    console.log('Carregando música:', tracks[index].name);
+}
+
+function playTrack() {
+    audioPlayer.play();
+    playPauseBtn.textContent = '⏸️';
+    console.log('Reproduzindo:', tracks[currentTrackIndex].name);
+}
+
+function pauseTrack() {
+    audioPlayer.pause();
+    playPauseBtn.textContent = '▶️';
+    console.log('Pausado:', tracks[currentTrackIndex].name);
+}
+
+function playNextTrack() {
+    currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+    loadTrack(currentTrackIndex);
+    playTrack();
+}
+
+function playPrevTrack() {
+    currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+    loadTrack(currentTrackIndex);
+    playTrack();
 }
 
 function loadTracks() {
     console.log('Carregando lista de músicas...');
-    if (!trackList) {
-        console.error('Elemento "track-list" não encontrado.');
-        return;
-    }
+    if (!trackList) return;
 
     trackList.innerHTML = '';
-    tracks.forEach(track => {
+    tracks.forEach((track, index) => {
         const li = document.createElement('li');
         li.textContent = track.name;
         li.addEventListener('click', () => {
-            playTrack(track.url, track.name);
+            currentTrackIndex = index;
+            loadTrack(currentTrackIndex);
+            playTrack();
         });
         trackList.appendChild(li);
     });
     console.log('Lista de músicas carregada com sucesso!');
 }
+
+// Eventos do player
+playPauseBtn.addEventListener('click', () => {
+    if (audioPlayer.paused) {
+        playTrack();
+    } else {
+        pauseTrack();
+    }
+});
+
+nextBtn.addEventListener('click', playNextTrack);
+prevBtn.addEventListener('click', playPrevTrack);
+
+// Tocar próxima música automaticamente ao finalizar
+audioPlayer.addEventListener('ended', playNextTrack);
+
+// Carregar a primeira música ao iniciar
+loadTrack(currentTrackIndex);
 
 startTimer();
 loadTracks();

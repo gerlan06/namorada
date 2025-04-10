@@ -16,9 +16,15 @@
 
     <!-- Tela principal -->
     <div id="main-screen" class="screen hidden">
-        <div class="music-selector">
+        <div class="music-player">
             <h3>Escolha uma música:</h3>
             <div id="song-title">Selecione uma música</div>
+            <audio id="audio-player" preload="auto"></audio>
+            <div class="player-controls">
+                <button id="prev-btn">⏮️</button>
+                <button id="play-pause-btn">▶️</button>
+                <button id="next-btn">⏭️</button>
+            </div>
             <ul id="track-list">
                 <!-- Lista de músicas será preenchida pelo JS -->
             </ul>

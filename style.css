@@ -1,198 +1,235 @@
-body {
+/* Reset básico */
+* {
     margin: 0;
     padding: 0;
-    background: linear-gradient(to bottom, #0d1b2a, #1b263b);
+    box-sizing: border-box;
+}
+
+body {
     font-family: Arial, sans-serif;
-    height: 100vh;
-    overflow: hidden;
-    position: relative;
+    background: linear-gradient(to bottom, #0f0c29, #302b63, #24243e, #00ffcc, #ff007a);
+    /* Gradiente inspirado na aurora boreal */
+    min-height: 100vh;
+    overflow-y: auto; /* Permite rolagem em telas pequenas */
+    color: #fff;
 }
 
-body::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><polygon points="10,2 12,8 18,8 13,12 15,18 10,14 5,18 7,12 2,8 8,8" fill="white"/></svg>') repeat;
-    background-size: 20px 20px;
-    opacity: 0.8;
-    animation: twinkle 3s infinite alternate;
-}
-
-@keyframes twinkle {
-    0% { opacity: 0.8; }
-    100% { opacity: 0.4; }
-}
-
+/* Tela de entrada */
 .screen {
-    height: 100vh;
-    width: 100vw;
     display: flex;
-    flex-direction: column;
     justify-content: center;
     align-items: center;
-    color: white;
-    text-align: center;
-    position: relative;
-    z-index: 1;
+    min-height: 100vh;
+    width: 100%;
+    flex-direction: column;
+}
+
+#entry-screen {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    padding: 20px;
+    border-radius: 15px;
+    cursor: pointer;
 }
 
 .letter {
-    font-size: 120px;
-}
-
-.screen p {
-    font-size: 24px;
+    font-size: 5vw; /* Ajusta com a largura da tela */
 }
 
 .hidden {
     display: none;
 }
 
-.hidden {
-    display: none;
-}
-
-#timer {
-    font-size: 20px;
+/* Music Player */
+.music-player {
     text-align: center;
+    margin: 2vh auto;
+    padding: 2vh;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    width: 90%;
+    max-width: 400px;
 }
 
-.carousel-item {
-    display: none;
-}
-
-.carousel-item.active {
-    display: block;
-}
-
-.balloon {
-    position: absolute;
-    font-size: 30px;
-    animation: float 6s ease-in-out infinite;
-}
-
-@keyframes float {
-    0% { bottom: -10%; }
-    100% { bottom: 110%; }
+.music-player h3 {
+    font-size: clamp(1.2em, 4vw, 1.5em); /* Tamanho ajustável */
+    margin-bottom: 1vh;
+    color: #fff;
 }
 
 #song-title {
-    text-align: center;
-    margin: 10px 0;
+    font-size: clamp(1em, 3vw, 1.2em);
+    margin-bottom: 1.5vh;
+    color: #e0e0e0;
 }
 
-#play-pause-btn {
-    display: block;
-    margin: 10px auto;
-    font-size: 20px;
+.player-controls {
+    display: flex;
+    justify-content: center;
+    gap: 3vw;
+    margin: 1.5vh 0;
 }
 
-#seek-bar {
-    width: 80%;
-    display: block;
-    margin: 10px auto;
+.player-controls button {
+    background: #ff007a;
+    border: none;
+    padding: 1.5vh 2vw;
+    border-radius: 50%;
+    font-size: clamp(1em, 3vw, 1.2em);
+    cursor: pointer;
+    color: #fff;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.player-controls button:hover {
+    background: #00ffcc;
+    transform: scale(1.1);
 }
 
 #track-list {
     list-style: none;
-    padding: 0;
-    text-align: center;
+    max-height: 20vh; /* Limita altura relativa */
+    overflow-y: auto;
 }
 
 #track-list li {
+    padding: 1vh;
     cursor: pointer;
-    padding: 5px;
+    background: rgba(255, 255, 255, 0.1);
+    margin: 0.5vh 0;
+    border-radius: 8px;
+    transition: background 0.3s;
+    font-size: clamp(0.9em, 2.5vw, 1em);
 }
 
 #track-list li:hover {
-    background-color: #f0f0f0;
+    background: rgba(255, 255, 255, 0.3);
 }
 
+/* Carrossel */
 .carousel {
     position: relative;
     width: 90%;
     max-width: 600px;
-    height: 337.5px;
-    overflow: hidden;
-    border-radius: 10px;
+    margin: 2vh auto;
+    overflow: visible; /* Remove corte das imagens */
 }
 
 .carousel-inner {
     display: flex;
-    width: 100%;
-    height: 100%;
     transition: transform 0.5s ease;
+    width: 100%;
 }
 
 .carousel-item {
-    width: 100%;
-    flex: 0 0 100%;
-    height: 100%;
+    min-width: 100%;
     display: none;
-    justify-content: center;
-    align-items: center;
+    text-align: center;
 }
 
 .carousel-item.active {
-    display: flex;
+    display: block;
 }
 
 .carousel-item img {
-    max-width: 600px;
-    max-height: 337.5px;
-    height: auto;
-    width: auto;
-    object-fit: contain;
+    width: 100%;
+    height: auto; /* Mantém proporção natural */
+    max-height: 50vh; /* Limita altura relativa à tela */
+    object-fit: contain; /* Preserva proporção */
     border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
 .carousel-control {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(0, 0, 0, 0.5);
-    color: white;
+    background: rgba(255, 255, 255, 0.2);
     border: none;
-    padding: 10px;
+    padding: 1vh 1vw;
     cursor: pointer;
-    font-size: 24px;
+    font-size: clamp(1.2em, 4vw, 1.5em);
+    border-radius: 50%;
+    color: #fff;
 }
 
 .carousel-control.prev {
-    left: 10px;
+    left: 1vw;
 }
 
 .carousel-control.next {
-    right: 10px;
+    right: 1vw;
 }
 
+/* Texto e Timer */
 .text-container {
-    margin-top: 20px;
-    background: rgba(0, 0, 0, 0.5);
-    padding: 20px;
-    border-radius: 10px;
+    text-align: center;
+    padding: 2vh;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    margin: 2vh auto;
+    width: 90%;
+    max-width: 400px;
 }
 
 .love-text {
-    font-size: 20px;
-    margin-bottom: 5px;
+    font-size: clamp(1.2em, 4vw, 1.5em);
+    margin-bottom: 1vh;
 }
 
 #timer {
-    font-size: 16px;
-    margin-bottom: 10px;
+    font-size: clamp(1em, 3vw, 1.2em);
+    color: #e0e0e0;
 }
 
+/* Balões */
 .balloon {
     position: absolute;
-    font-size: 30px;
-    animation: float 6s ease-in infinite;
+    font-size: clamp(1.5em, 5vw, 2em);
+    animation: float 6s ease-in-out infinite;
 }
 
 @keyframes float {
-    0% { transform: translateY(100vh); }
-    100% { transform: translateY(-100vh); }
+    0% { bottom: -10%; opacity: 0; }
+    20% { opacity: 1; }
+    100% { bottom: 100%; opacity: 0.5; }
+}
+
+/* Media Queries para Responsividade */
+@media (max-width: 768px) { /* Celular */
+    .music-player {
+        width: 95%;
+        padding: 1.5vh;
+    }
+
+    .carousel {
+        width: 95%;
+    }
+
+    .carousel-item img {
+        max-height: 40vh; /* Menor em celulares */
+    }
+
+    .text-container {
+        width: 95%;
+    }
+}
+
+@media (min-width: 769px) { /* Notebook */
+    .music-player {
+        width: 80%;
+    }
+
+    .carousel {
+        width: 80%;
+    }
+
+    .carousel-item img {
+        max-height: 50vh;
+    }
+
+    .text-container {
+        width: 80%;
+    }
 }
