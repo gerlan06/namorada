@@ -13,7 +13,7 @@ if (entryScreen) {
 }
 
 function startTimer() {
-    const startDate = new Date('2023-01-01T00:00:00');
+    const startDate = new Date('2025-02-14T00:00:00');
     const timer = document.getElementById('timer');
     if (!timer) {
         console.error('Elemento "timer" não encontrado no HTML.');
