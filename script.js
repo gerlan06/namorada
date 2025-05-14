@@ -13,7 +13,7 @@ if (entryScreen) {
 }
 
 function startTimer() {
-    const startDate = new Date('2025-02-14T00:00:00');
+    const startDate = new Date('2025-02-13T00:00:00');
     const timer = document.getElementById('timer');
     if (!timer) {
         console.error('Elemento "timer" não encontrado no HTML.');
@@ -83,11 +83,11 @@ if (!nextBtn) console.error('Elemento "next-btn" não encontrado.');
 
 // Lista de músicas com arquivos MP3 locais
 const tracks = [
-    { name: 'Melhor que Ontem - Djonga', src: 'musica1.mp3' },
+    { name: 'Melhor que Ontem - Djonga', src: 'musica 1.mp3' },
     { name: 'Chuva de Arroz - Luan Santana', src: 'musica2.mp3' },
     { name: 'Será que é Amor - Arlindo Cruz', src: 'musica3.mp3' },
-    { name: 'Música 4', src: 'musica4.mp3' }, // Substitua pelo nome real
-    { name: 'Música 5', src: 'musica5.mp3' }  // Substitua pelo nome real
+    { name: 'Nocaute', src: 'nocaute.mp3' }, // Substitua pelo nome real
+    { name: 'Declaração', src: 'musica5.mp3' }  // Substitua pelo nome real
 ];
 
 let currentTrackIndex = 0;
